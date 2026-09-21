@@ -23,28 +23,66 @@ def last_token(hidden: Tensor) -> Tensor:
     return hidden[:, -1, :]
 
 
+def _extract_hidden(output):
+    """Extract hidden states from a decoder-block forward-hook output."""
+    if isinstance(output, torch.Tensor):
+        return output
+    if isinstance(output, (tuple, list)) and output:
+        return output[0]
+    if hasattr(output, "last_hidden_state"):
+        return output.last_hidden_state
+    raise TypeError(f"unsupported decoder-block output type: {type(output)!r}")
+
+
+@torch.inference_mode()
+def final_token_block_trace(
+    model,
+    tokenizer,
+    text: str,
+    device: str | None = None,
+) -> tuple[Tensor, ...]:
+    """
+    Return raw final-token outputs from every decoder block, before final norm.
+
+    Hugging Face's output_hidden_states convention appends the model's final
+    normalized state in the last slot for Llama/Qwen-style decoders. That makes
+    the last slot incomparable to earlier raw block outputs. Forward hooks on the
+    decoder blocks avoid that boundary artifact.
+    """
+    layers = _layers(model)
+    captured: list[Tensor | None] = [None] * len(layers)
+    handles = []
+
+    for index, block in enumerate(layers):
+        def hook(_module, _args, output, index=index):
+            h = _extract_hidden(output)
+            captured[index] = last_token(h).detach().float().cpu()
+
+        handles.append(block.register_forward_hook(hook))
+
+    try:
+        batch = tokenizer(text, return_tensors="pt")
+        if device is None:
+            device = next(model.parameters()).device
+        batch = {k: v.to(device) for k, v in batch.items()}
+        model(**batch, use_cache=False, return_dict=True)
+    finally:
+        for handle in handles:
+            handle.remove()
+
+    if any(h is None for h in captured):
+        missing = [i for i, h in enumerate(captured) if h is None]
+        raise RuntimeError(f"failed to capture decoder layers {missing}")
+    return tuple(h for h in captured if h is not None)
+
+
 @torch.inference_mode()
 def hidden_at_layer(model, tokenizer, text: str, layer: int, device: str | None = None) -> Tensor:
-    """Return the final-token hidden state at one transformer depth."""
-    batch = tokenizer(text, return_tensors="pt")
-    if device is None:
-        device = next(model.parameters()).device
-    batch = {k: v.to(device) for k, v in batch.items()}
-    out = model(**batch, output_hidden_states=True, use_cache=False, return_dict=True)
-    # hidden_states[0] is the embedding output; hidden_states[i+1] is layer i output.
-    h = out.hidden_states[layer + 1]
-    return last_token(h).detach()
-
-
-@torch.inference_mode()
-def final_token_hidden_trace(model, tokenizer, text: str, device: str | None = None) -> tuple[Tensor, ...]:
-    """Return final-token states from embedding output through every transformer layer."""
-    batch = tokenizer(text, return_tensors="pt")
-    if device is None:
-        device = next(model.parameters()).device
-    batch = {k: v.to(device) for k, v in batch.items()}
-    out = model(**batch, output_hidden_states=True, use_cache=False, return_dict=True)
-    return tuple(last_token(h).detach() for h in out.hidden_states)
+    """Return the raw post-block final-token hidden state at decoder layer index."""
+    trace = final_token_block_trace(model, tokenizer, text, device=device)
+    if not 0 <= layer < len(trace):
+        raise ValueError(f"layer {layer} outside 0..{len(trace)-1}")
+    return trace[layer]
 
 
 @torch.inference_mode()
@@ -55,9 +93,9 @@ def branch_residue_trace(
     branch_text: str,
     device: str | None = None,
 ) -> tuple[Tensor, ...]:
-    """Difference between branch and common-anchor final-token states at every depth."""
-    anchor = final_token_hidden_trace(model, tokenizer, anchor_text, device=device)
-    branch = final_token_hidden_trace(model, tokenizer, branch_text, device=device)
+    """Difference between branch and common-anchor raw block outputs at every depth."""
+    anchor = final_token_block_trace(model, tokenizer, anchor_text, device=device)
+    branch = final_token_block_trace(model, tokenizer, branch_text, device=device)
     if len(anchor) != len(branch):
         raise RuntimeError("anchor and branch traces have different depths")
     return tuple(b - a for a, b in zip(anchor, branch))
