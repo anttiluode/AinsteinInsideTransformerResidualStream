@@ -36,6 +36,33 @@ def hidden_at_layer(model, tokenizer, text: str, layer: int, device: str | None 
     return last_token(h).detach()
 
 
+@torch.inference_mode()
+def final_token_hidden_trace(model, tokenizer, text: str, device: str | None = None) -> tuple[Tensor, ...]:
+    """Return final-token states from embedding output through every transformer layer."""
+    batch = tokenizer(text, return_tensors="pt")
+    if device is None:
+        device = next(model.parameters()).device
+    batch = {k: v.to(device) for k, v in batch.items()}
+    out = model(**batch, output_hidden_states=True, use_cache=False, return_dict=True)
+    return tuple(last_token(h).detach() for h in out.hidden_states)
+
+
+@torch.inference_mode()
+def branch_residue_trace(
+    model,
+    tokenizer,
+    anchor_text: str,
+    branch_text: str,
+    device: str | None = None,
+) -> tuple[Tensor, ...]:
+    """Difference between branch and common-anchor final-token states at every depth."""
+    anchor = final_token_hidden_trace(model, tokenizer, anchor_text, device=device)
+    branch = final_token_hidden_trace(model, tokenizer, branch_text, device=device)
+    if len(anchor) != len(branch):
+        raise RuntimeError("anchor and branch traces have different depths")
+    return tuple(b - a for a, b in zip(anchor, branch))
+
+
 def branch_residue(
     model,
     tokenizer,
