@@ -1,0 +1,301 @@
+{
+  "scope": "real frozen-model depth microscope using raw decoder-block outputs; all branches are still fully evaluated, so this is not a compute-saving result",
+  "model": "Qwen/Qwen3-8B",
+  "anchor": "Problem: 17 * 24 = ?\nThink:",
+  "branches": [
+    "Problem: 17 * 24 = ?\nThink using decomposition into 20 + 4:",
+    "Problem: 17 * 24 = ?\nThink using repeated addition and correction:",
+    "Problem: 17 * 24 = ?\nThink by checking nearby multiples first:"
+  ],
+  "layer_semantics": "raw decoder block output before the model's final norm",
+  "layers": {
+    "6": {
+      "anchor_norm": 43.99464416503906,
+      "branch_state_norms": [
+        36.666141510009766,
+        37.01430892944336,
+        37.60971450805664
+      ],
+      "residue_norms": [
+        34.491703033447266,
+        31.3797664642334,
+        33.78253173828125
+      ],
+      "relative_residue_norms": [
+        0.8552285412245059,
+        0.7747234167471471,
+        0.827959003356988
+      ],
+      "anchor_branch_state_cosines": [
+        0.6478954553604126,
+        0.7126180529594421,
+        0.6674501299858093
+      ],
+      "pairwise_residue_cosines": [
+        {
+          "i": 0,
+          "j": 1,
+          "cosine": 0.8732050657272339
+        },
+        {
+          "i": 0,
+          "j": 2,
+          "cosine": 0.8660548329353333
+        },
+        {
+          "i": 1,
+          "j": 2,
+          "cosine": 0.9215283989906311
+        }
+      ],
+      "mean_pairwise_residue_cosine": 0.886929432551066,
+      "branch_specific_fraction": [
+        0.3088717027695724,
+        0.26018921063564476,
+        0.25833013583730957
+      ],
+      "mean_branch_specific_fraction": 0.2757970164141756,
+      "common_mode_rms_over_residue_rms": 0.9605691930566264
+    },
+    "12": {
+      "anchor_norm": 65.12158203125,
+      "branch_state_norms": [
+        57.16986083984375,
+        61.88111877441406,
+        58.23876190185547
+      ],
+      "residue_norms": [
+        55.29419708251953,
+        53.12847137451172,
+        54.5817985534668
+      ],
+      "relative_residue_norms": [
+        0.90430198195968,
+        0.8366510481664071,
+        0.8849164458079791
+      ],
+      "anchor_branch_state_cosines": [
+        0.5978752970695496,
+        0.6510829329490662,
+        0.6134849190711975
+      ],
+      "pairwise_residue_cosines": [
+        {
+          "i": 0,
+          "j": 1,
+          "cosine": 0.8029851913452148
+        },
+        {
+          "i": 0,
+          "j": 2,
+          "cosine": 0.8263562321662903
+        },
+        {
+          "i": 1,
+          "j": 2,
+          "cosine": 0.8471658229827881
+        }
+      ],
+      "mean_pairwise_residue_cosine": 0.8255024154980978,
+      "branch_specific_fraction": [
+        0.35833293894560636,
+        0.34666008726739045,
+        0.3180401838346732
+      ],
+      "mean_branch_specific_fraction": 0.34101107001589,
+      "common_mode_rms_over_residue_rms": 0.9398851498173285
+    },
+    "18": {
+      "anchor_norm": 96.88379669189453,
+      "branch_state_norms": [
+        86.65240478515625,
+        88.32209777832031,
+        84.77008819580078
+      ],
+      "residue_norms": [
+        74.05421447753906,
+        71.67961883544922,
+        70.04618835449219
+      ],
+      "relative_residue_norms": [
+        0.8069712011207636,
+        0.7740533209322543,
+        0.7712049582401956
+      ],
+      "anchor_branch_state_cosines": [
+        0.6796189546585083,
+        0.7040628790855408,
+        0.7102271318435669
+      ],
+      "pairwise_residue_cosines": [
+        {
+          "i": 0,
+          "j": 1,
+          "cosine": 0.8027467727661133
+        },
+        {
+          "i": 0,
+          "j": 2,
+          "cosine": 0.8380343914031982
+        },
+        {
+          "i": 1,
+          "j": 2,
+          "cosine": 0.845136821269989
+        }
+      ],
+      "mean_pairwise_residue_cosine": 0.8286393284797668,
+      "branch_specific_fraction": [
+        0.34966247645633813,
+        0.34857859728450435,
+        0.3159670840969497
+      ],
+      "mean_branch_specific_fraction": 0.3380693859459307,
+      "common_mode_rms_over_residue_rms": 0.9407833091765001
+    },
+    "24": {
+      "anchor_norm": 244.1573028564453,
+      "branch_state_norms": [
+        236.61766052246094,
+        231.64308166503906,
+        236.63571166992188
+      ],
+      "residue_norms": [
+        153.90411376953125,
+        154.22207641601562,
+        145.07566833496094
+      ],
+      "relative_residue_norms": [
+        0.6402334792472836,
+        0.6482637737719267,
+        0.603484925744506
+      ],
+      "anchor_branch_state_cosines": [
+        0.7954922914505005,
+        0.79111647605896,
+        0.8183484673500061
+      ],
+      "pairwise_residue_cosines": [
+        {
+          "i": 0,
+          "j": 1,
+          "cosine": 0.7709831595420837
+        },
+        {
+          "i": 0,
+          "j": 2,
+          "cosine": 0.7368002533912659
+        },
+        {
+          "i": 1,
+          "j": 2,
+          "cosine": 0.7705207467079163
+        }
+      ],
+      "mean_pairwise_residue_cosine": 0.759434719880422,
+      "branch_specific_fraction": [
+        0.405504617172272,
+        0.37819297883527003,
+        0.4205117253117191
+      ],
+      "mean_branch_specific_fraction": 0.40140310710642035,
+      "common_mode_rms_over_residue_rms": 0.9160722667760608
+    },
+    "30": {
+      "anchor_norm": 582.9485473632812,
+      "branch_state_norms": [
+        542.5076904296875,
+        566.1517944335938,
+        596.3866577148438
+      ],
+      "residue_norms": [
+        271.53997802734375,
+        292.7863464355469,
+        282.3736572265625
+      ],
+      "relative_residue_norms": [
+        0.48254204634351033,
+        0.5095923058863773,
+        0.4788692070086327
+      ],
+      "anchor_branch_state_cosines": [
+        0.8860121369361877,
+        0.8705580830574036,
+        0.8855871558189392
+      ],
+      "pairwise_residue_cosines": [
+        {
+          "i": 0,
+          "j": 1,
+          "cosine": 0.7663744688034058
+        },
+        {
+          "i": 0,
+          "j": 2,
+          "cosine": 0.6327627897262573
+        },
+        {
+          "i": 1,
+          "j": 2,
+          "cosine": 0.6721398234367371
+        }
+      ],
+      "mean_pairwise_residue_cosine": 0.6904256939888,
+      "branch_specific_fraction": [
+        0.44893775690275667,
+        0.4063709509556106,
+        0.5062394491625256
+      ],
+      "mean_branch_specific_fraction": 0.453849385673631,
+      "common_mode_rms_over_residue_rms": 0.8906502750093946
+    },
+    "35": {
+      "anchor_norm": 1840.813232421875,
+      "branch_state_norms": [
+        1457.361328125,
+        1471.925537109375,
+        1403.8768310546875
+      ],
+      "residue_norms": [
+        597.6055297851562,
+        631.3402709960938,
+        662.5501098632812
+      ],
+      "relative_residue_norms": [
+        0.3623856280584897,
+        0.3811591042449918,
+        0.4083903836124082
+      ],
+      "anchor_branch_state_cosines": [
+        0.9608427882194519,
+        0.951557993888855,
+        0.9520063996315002
+      ],
+      "pairwise_residue_cosines": [
+        {
+          "i": 0,
+          "j": 1,
+          "cosine": 0.845088541507721
+        },
+        {
+          "i": 0,
+          "j": 2,
+          "cosine": 0.7895029187202454
+        },
+        {
+          "i": 1,
+          "j": 2,
+          "cosine": 0.797502875328064
+        }
+      ],
+      "mean_pairwise_residue_cosine": 0.8106981118520101,
+      "branch_specific_fraction": [
+        0.3560641482135586,
+        0.33638432448794114,
+        0.378016278986858
+      ],
+      "mean_branch_specific_fraction": 0.35682158389611923,
+      "common_mode_rms_over_residue_rms": 0.9337257159116991
+    }
+  }
+}
