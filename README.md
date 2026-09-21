@@ -126,6 +126,20 @@ python gate05_jspace_readout.py --layers 18,24,30
 
 By default it discovers the Qwen3-8B lens in Neuronpedia's public \`neuronpedia/jacobian-lens\` repository, downloads it, and reports branch-specific J-lens logit deltas at the fitted layers.
 
+On Windows, Qwen is now loaded **before the script even resolves or opens the ~1.17 GB lens artifact**. The loader also uses conservative default Accelerate placement caps of 8 GiB on CUDA:0 and 10 GiB on host RAM, with disk offload available for overflow. This is deliberately below a 12 GB GPU / 24 GB RAM machine's headline capacity so Windows, CUDA staging and file mappings retain headroom.
+
+The safe first retry is:
+
+~~~bash
+python3.13 gate05_jspace_readout.py --layers 18,24,30
+~~~
+
+If that works and Task Manager shows plenty of committed-memory headroom, the caps can be raised explicitly:
+
+~~~bash
+python3.13 gate05_jspace_readout.py --layers 18,24,30 --gpu-memory 10GiB --cpu-memory 12GiB
+~~~
+
 Interpretation boundary:
 
 - top J-lens delta tokens are a **readability diagnostic**;
