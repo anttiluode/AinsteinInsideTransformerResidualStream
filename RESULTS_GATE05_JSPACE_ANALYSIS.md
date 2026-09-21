@@ -72,3 +72,33 @@ The next gate is lexical invariance:
 If strategy identity survives that attack, then layer 30 becomes a credible first collision layer.
 
 If it fails, the current result is still useful: it tells us that the J-lens reads prompt-conditioned lexical state, but not yet the hidden route object we need.
+
+
+## New control suggested by the data: separate carrier from route residue
+
+The raw and transported geometry together suggest a nuisance decomposition worth testing explicitly:
+
+    R_i = C + D_i
+
+with:
+
+- C = common task / answer-preparation carrier shared by all branches;
+- D_i = branch-specific departure.
+
+At layer 30 the raw routes are relatively separated, but Jacobian transport increases all three pairwise cosines substantially. This is consistent with a common downstream-effective component dominating the transported geometry while smaller branch-specific components determine the sparse readable extremes.
+
+That makes the naive bilinear collision
+
+    H(R_A, R_B)
+
+dangerous: it can obtain an apparent win from C x C or C x D interactions without ever composing the branch-specific computational material.
+
+Gate 0 now therefore requires a centered control:
+
+    C = mean_i R_i
+    D_i = R_i - C
+    output = C + H(D_A, D_B)
+
+and compares it against the raw-residue composer, carrier-only, departure-only and shuffled-departure attackers.
+
+This is also a cleaner Temporal-Sihti interpretation: the shared carrier is what survives across the speculative futures; the centered D_i are the departures that distinguish one future from another.
