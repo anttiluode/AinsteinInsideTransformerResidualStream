@@ -8,6 +8,7 @@ from latent_fork import (
     LinearComposer,
     final_token_block_trace,
     inject_last_token,
+    inject_token_position,
     relative_outside_span,
 )
 
@@ -92,6 +93,29 @@ class ResidueMathTests(unittest.TestCase):
         self.assertTrue(torch.equal(trace[1], torch.full((1, 4), 6.0)))
         self.assertTrue(torch.equal(trace[2], torch.full((1, 4), 9.0)))
 
+    def test_position_injection_targets_only_requested_token(self):
+        model = DummyModel()
+        x = torch.zeros(1, 3, 4)
+        delta = torch.tensor([[1.0, 2.0, 3.0, 4.0]])
+
+        with inject_token_position(model, layer=0, delta=delta, position=1):
+            y = model.model.layers[0](x)
+
+        self.assertTrue(torch.equal(y[:, 0, :], torch.zeros(1, 4)))
+        self.assertTrue(torch.equal(y[:, 1, :], delta))
+        self.assertTrue(torch.equal(y[:, 2, :], torch.zeros(1, 4)))
+
+    def test_once_injection_fires_only_on_first_forward(self):
+        model = DummyModel()
+        x = torch.zeros(1, 2, 4)
+        delta = torch.ones(1, 4)
+
+        with inject_last_token(model, layer=0, delta=delta, once=True):
+            y1 = model.model.layers[0](x)
+            y2 = model.model.layers[0](x)
+
+        self.assertTrue(torch.equal(y1[:, -1, :], delta))
+        self.assertTrue(torch.equal(y2, x))
     def test_injection_is_temporary(self):
         model = DummyModel()
         x = torch.zeros(1, 2, 4)

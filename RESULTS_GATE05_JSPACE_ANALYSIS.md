@@ -102,3 +102,25 @@ Gate 0 now therefore requires a centered control:
 and compares it against the raw-residue composer, carrier-only, departure-only and shuffled-departure attackers.
 
 This is also a cleaner Temporal-Sihti interpretation: the shared carrier is what survives across the speculative futures; the centered D_i are the departures that distinguish one future from another.
+
+## Gate 0.5d result — strategy invariance survives lexical attack
+
+The lexical-echo attacker passed strongly at layer 30.
+
+| representation | within-strategy cosine | between-strategy cosine | gap |
+|---|---:|---:|---:|
+| raw residual | 0.8106 | 0.5088 | **+0.3018** |
+| Jacobian-transported residual | 0.8177 | 0.5129 | **+0.3048** |
+| full J-lens delta logits | 0.8699 | 0.6758 | **+0.1941** |
+
+The decoy test was 3/3 for intended strategy and 0/3 for the misleading lexical strategy.
+
+- `ignore nearby multiples; split ...` -> nearest centroid A (0.905), not C (0.693);
+- `do not use decomposition; running sum ...` -> B (0.950), not A (0.727);
+- `do not use repeated addition or correction; nearby product ...` -> C (0.941), not B (0.803).
+
+This retires the simplest explanation of the first J-lens result: the route is not merely echoing one strategy keyword.
+
+The result is still deliberately narrower than 'the model executed three different algorithms'. At the measurement point the model has read an instruction describing a method and is poised to continue. The representation may therefore be a **planned method / route state** rather than completed hidden computation.
+
+That is exactly what Gate 0.6 now tests causally: if the route state is part of the control machinery, a one-shot linear edit should bend a neutral continuation toward the corresponding method, and ideally the vector should transfer from 17x24 to unseen multiplication problems.

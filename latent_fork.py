@@ -165,24 +165,46 @@ def _layers(model):
 
 
 @contextmanager
-def inject_last_token(model, layer: int, delta: Tensor, scale: float = 1.0):
+def inject_token_position(
+    model,
+    layer: int,
+    delta: Tensor,
+    *,
+    position: int = -1,
+    scale: float = 1.0,
+    once: bool = False,
+):
     """
-    Add a temporary vector to the final sequence position entering layer.
+    Add a temporary vector at one token position entering a decoder block.
 
-    Permanent weights are untouched. This makes the synthesized residue a
-    temporary lens on the resumed main stream.
+    position=-1 means the final token. With once=True, only the first
+    matching forward call is modified. The latter is useful during generation:
+    edit the prompt/workspace state once, then let cached causal computation
+    unfold without repeatedly steering every newly generated token.
+
+    If the selected position is outside a later one-token decode call, the hook
+    simply does nothing.
     """
     block = _layers(model)[layer]
+    fired = False
 
     def pre_hook(_module, args):
-        if not args:
+        nonlocal fired
+        if not args or (once and fired):
             return args
+
         h = args[0]
+        pos = position if position >= 0 else h.shape[1] + position
+        if pos < 0 or pos >= h.shape[1]:
+            return args
+
         d = delta.to(device=h.device, dtype=h.dtype)
         if d.ndim == 1:
             d = d.unsqueeze(0)
+
         h2 = h.clone()
-        h2[:, -1, :] = h2[:, -1, :] + scale * d
+        h2[:, pos, :] = h2[:, pos, :] + scale * d
+        fired = True
         return (h2, *args[1:])
 
     handle = block.register_forward_pre_hook(pre_hook)
@@ -190,6 +212,27 @@ def inject_last_token(model, layer: int, delta: Tensor, scale: float = 1.0):
         yield
     finally:
         handle.remove()
+
+
+@contextmanager
+def inject_last_token(
+    model,
+    layer: int,
+    delta: Tensor,
+    scale: float = 1.0,
+    *,
+    once: bool = False,
+):
+    """Backward-compatible final-token wrapper around inject_token_position."""
+    with inject_token_position(
+        model,
+        layer,
+        delta,
+        position=-1,
+        scale=scale,
+        once=once,
+    ):
+        yield
 
 
 @torch.inference_mode()
