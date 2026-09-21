@@ -121,7 +121,7 @@ First, the depth microscope now captures **raw decoder-block outputs with forwar
 Second, a new script reads the same speculative branches through a pre-fitted Qwen3-8B Jacobian lens:
 
 ~~~bash
-python gate05_jspace_readout.py
+python gate05_jspace_readout.py --layers 18,24,30
 ~~~
 
 By default it discovers the Qwen3-8B lens in Neuronpedia's public \`neuronpedia/jacobian-lens\` repository, downloads it, and reports branch-specific J-lens logit deltas at the fitted layers.

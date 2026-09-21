@@ -94,3 +94,48 @@ The second command downloads a pre-fitted Qwen3-8B Jacobian lens and asks a much
 > what branch-specific, human-readable concepts become more or less available to future computation at each fitted layer?
 
 Top J-lens deltas are still not the paper's sparse k<=25 J-space decomposition. They are the next microscope, not the verdict.
+
+## Corrected raw-block rerun
+
+The raw decoder-block hook version was rerun on the same model and prompts.
+
+| Layer | Mean pairwise residue cosine | Mean branch-specific fraction | Common-mode RMS / residue RMS |
+|---:|---:|---:|---:|
+| 6 | 0.8869 | 0.2758 | 0.9606 |
+| 12 | 0.8255 | 0.3410 | 0.9399 |
+| 18 | 0.8286 | 0.3381 | 0.9408 |
+| 24 | 0.7594 | 0.4014 | 0.9161 |
+| 30 | 0.6904 | 0.4538 | 0.8907 |
+| 35 | 0.8107 | 0.3568 | 0.9337 |
+
+The final-layer norm collapse disappears completely. Raw residue norms at layer 35 are approximately 598, 631 and 663, confirming that the old ~46 norm was a final-normalization instrumentation artifact rather than late purification.
+
+The more interesting corrected shape is **differentiate, then partially reconverge**:
+
+- branch-specific fraction rises from ~0.28 at L6 to ~0.45 at L30;
+- mean pairwise residue cosine falls from ~0.89 to ~0.69 over the same range;
+- at L35 branch-specific fraction falls back to ~0.36 while pairwise cosine rises to ~0.81 and the common-mode ratio rises again.
+
+Among these sampled layers, L30 is therefore the strongest raw-geometry strategy-separation point. This remains descriptive: wording, length and answer-formation controls are still required before calling it a reasoning workspace.
+
+Relative residue magnitude also shrinks late relative to the growing absolute state scale: mean relative residue norm is roughly 0.78 at L18, 0.63 at L24, 0.49 at L30 and 0.38 at L35. Raw norm alone is therefore especially misleading in the late stack.
+
+## J-lens memory failure and fix
+
+The first gate05_jspace_readout.py attempt downloaded/reconstructed the ~1.17 GB Qwen3-8B Jacobian-lens checkpoint, then the Python process disappeared while Qwen model loading was at 18%. The ordinary depth-trace command immediately afterward loaded the same Qwen model successfully.
+
+The likely peak-memory problem was self-inflicted: the script eagerly torch.load'ed the entire lens checkpoint before instantiating the 8B model.
+
+The low-memory fix now:
+
+1. resolves/downloads the lens file but does not load its tensors;
+2. loads Qwen first with low_cpu_mem_usage=True;
+3. opens the lens checkpoint with torch.load(..., mmap=True) where supported;
+4. materializes one selected 4096x4096 Jacobian matrix at a time;
+5. frees and garbage-collects that layer before moving on.
+
+For the first retry, prefer a narrow layer sweep:
+
+    python3.13 gate05_jspace_readout.py --layers 18,24,30
+
+Once that works, expand the sweep.
