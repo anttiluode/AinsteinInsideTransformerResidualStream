@@ -151,6 +151,47 @@ Delta r = W z_AB.
 
 It is cheap, role-sensitive, and can leave the span of the individual branch vectors.
 
+
+## Gate 1 — computational foveation
+
+Gate 1 adds an explicit **resolution budget** per speculative branch:
+
+rho_i = compute depth allocated to branch i
+
+subject to
+
+sum_i rho_i <= B.
+
+Every branch receives a cheap coarse probe first. The scheduler then purchases additional depth only where the estimated marginal value justifies it, while reserving a small amount of compute for underexplored routes so an initially unimpressive late bloomer can still recover.
+
+This turns the peripheral-field metaphor into a falsifiable compute-allocation question:
+
+- **uniform depth:** every branch gets the same resolution;
+- **greedy depth:** keep deepening whichever branch currently looks best;
+- **adaptive foveation:** deepen promising branches but preserve a diversity reserve;
+- **oracle:** use future payoff only as an upper bound.
+
+The scheduler implementation lives in [foveation.py](foveation.py), and the pre-registered real-model test is [GATE1_CONTRACT.md](GATE1_CONTRACT.md).
+
+A small deterministic receipt can be run without a model:
+
+~~~bash
+python gate1_allocator_receipt.py
+~~~
+
+That receipt is intentionally only a scheduler test. It includes a late-bloomer branch whose first probe is weak but whose deeper trajectory has the highest ceiling. A useful scheduler should not collapse permanently onto the easiest early route.
+
+Gate 1a will use cached hidden-state traces from the frozen transformer and count branch-layer equivalents. Gate 1b must actually stop abandoned branches early and show a wall-clock/FLOP advantage before this repo can claim compute efficiency.
+
+The new distinction is:
+
+~~~text
+purification = one route becomes sharp while alternatives remain compressed and addressable
+collapse      = one route becomes sharp because alternatives were deleted
+~~~
+
+The hoped-for architecture is therefore not "think longer everywhere." It is "spend high-resolution computation only where a coarse future field says it matters."
+
 ## Nearest neighbors / boundaries
 
 This project should be attacked against at least:
