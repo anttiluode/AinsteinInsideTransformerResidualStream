@@ -263,6 +263,20 @@ It compares the legacy three-candidate Gate-0.7 / Gate-0.7b batches against the 
 
 See [GATE07D_SCORING_INVARIANCE.md](GATE07D_SCORING_INVARIANCE.md).
 
+Gate 0.7d failed for the short first-action readout: row reversal was exactly stable, but adding unrelated longer candidates changed the BF16 batch shape enough to flip A and B's target-margin signs and winners. The longer trajectory readout stayed semantically stable. See [RESULTS_GATE07D_ANALYSIS.md](RESULTS_GATE07D_ANALYSIS.md).
+
+### Gate 0.7e — rise above the numerical floor
+
+Before replacing the scorer, test one prospectively chosen stronger intervention:
+
+```bash
+python3.13 gate07e_numerical_floor.py
+```
+
+The same frozen D_A/D_B/D_C vectors are evaluated at scales 0.5, 1.0 and 2.0 in both the legacy three-row and larger Gate-0.7c batch contexts. **Scale 2.0 is the preregistered primary test.** It passes only if all target-margin signs and all route winners agree across batch contexts.
+
+A pass would not rescue old scale-1 numbers; it would only establish that the causal effect can rise above the present numerical floor. A failure sends the project to candidate-serial / KV-cache / higher-precision scoring rather than to ever larger steering edits. See [GATE07E_NUMERICAL_FLOOR.md](GATE07E_NUMERICAL_FLOOR.md).
+
 ## Current code
 
 ~~~bash
