@@ -1,3 +1,4 @@
 torch>=2.3
 transformers>=4.51
 accelerate>=0.33
+huggingface_hub>=0.36
