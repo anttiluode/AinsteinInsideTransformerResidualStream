@@ -1,6 +1,6 @@
 import unittest
 
-from gate07c_temporal_footprint import (
+from temporal_footprint_candidates import (
     HORIZONS,
     ROUTES,
     temporal_candidates,
