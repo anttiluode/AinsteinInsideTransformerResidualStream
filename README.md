@@ -179,6 +179,14 @@ A small deterministic receipt can be run without a model:
 python gate1_allocator_receipt.py
 ~~~
 
+A real frozen-model depth microscope is also included:
+
+~~~bash
+python gate1_depth_trace.py --model Qwen/Qwen3-8B
+~~~
+
+It records how branch residues change across transformer depth. It deliberately uses full forward passes and therefore does **not** claim a compute saving; its role is to choose and audit coarse probe depths before Gate 1b implements genuine partial execution.
+
 That receipt is intentionally only a scheduler test. It includes a late-bloomer branch whose first probe is weak but whose deeper trajectory has the highest ceiling. A useful scheduler should not collapse permanently onto the easiest early route.
 
 Gate 1a will use cached hidden-state traces from the frozen transformer and count branch-layer equivalents. Gate 1b must actually stop abandoned branches early and show a wall-clock/FLOP advantage before this repo can claim compute efficiency.
