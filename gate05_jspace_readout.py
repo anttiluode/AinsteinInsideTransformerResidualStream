@@ -47,6 +47,21 @@ def parse_args():
         help="Comma-separated layer subset. Default: all layers available in the lens.",
     )
     p.add_argument("--top-k", type=int, default=20)
+    p.add_argument(
+        "--gpu-memory",
+        default="8GiB",
+        help="Accelerate placement cap for CUDA:0. Conservative default for a 12 GB Windows GPU.",
+    )
+    p.add_argument(
+        "--cpu-memory",
+        default="10GiB",
+        help="Accelerate placement cap for host RAM. Leaves headroom for Windows and lens work.",
+    )
+    p.add_argument(
+        "--offload-dir",
+        default=".offload_qwen",
+        help="Disk offload folder if the explicit GPU+CPU placement caps are insufficient.",
+    )
     p.add_argument("--out", default="results/gate05_jspace_readout.json")
     return p.parse_args()
 
@@ -238,20 +253,44 @@ def main():
         "Problem: 17 * 24 = ?\nThink by checking nearby multiples first:",
     ]
 
-    # Resolve/download the lens file first, but DO NOT torch.load it yet.
-    # The first Windows run showed that keeping the ~1.17 GB lens resident while
-    # loading Qwen3-8B can make the process disappear during weight loading.
-    lens_file = resolve_lens_file(args.lens_repo, args.lens_file, args.lens_prefix)
-    lens_path = hf_hub_download(args.lens_repo, lens_file)
-
+    # Empirical Windows rule: do not touch the ~1.17 GB lens artifact at all
+    # before Qwen is stably placed. Even reconstructing/opening the lens cache
+    # first can raise host commit pressure enough that model loading terminates.
     tok = AutoTokenizer.from_pretrained(args.model)
     dtype = torch.bfloat16 if torch.cuda.is_available() else torch.float32
+
+    model_kwargs = {
+        "dtype": dtype,
+        "device_map": "auto",
+        "low_cpu_mem_usage": True,
+    }
+    if torch.cuda.is_available():
+        model_kwargs["max_memory"] = {
+            0: args.gpu_memory,
+            "cpu": args.cpu_memory,
+        }
+        model_kwargs["offload_folder"] = args.offload_dir
+        model_kwargs["offload_state_dict"] = True
+        print(
+            "Loading Qwen first with explicit placement caps: "
+            f"cuda:0={args.gpu_memory}, cpu={args.cpu_memory}, "
+            f"offload={args.offload_dir}"
+        )
+    else:
+        print("CUDA not available; loading Qwen on CPU.")
+
     model = AutoModelForCausalLM.from_pretrained(
         args.model,
-        dtype=dtype,
-        device_map="auto",
-        low_cpu_mem_usage=True,
+        **model_kwargs,
     ).eval()
+    print("Qwen load complete. Resolving Jacobian lens now.")
+
+    gc.collect()
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+
+    lens_file = resolve_lens_file(args.lens_repo, args.lens_file, args.lens_prefix)
+    lens_path = hf_hub_download(args.lens_repo, lens_file)
 
     # Open the lens only after the model is stably loaded. With mmap=True the
     # matrices remain file-backed until touched.
