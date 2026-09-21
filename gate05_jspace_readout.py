@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import gc
 import json
 from pathlib import Path
 
@@ -90,7 +91,25 @@ def resolve_lens_file(repo_id: str, filename: str, prefix: str) -> str:
 
 
 def load_jacobians(path: str) -> tuple[dict[int, torch.Tensor], dict]:
-    ckpt = torch.load(path, map_location="cpu", weights_only=True)
+    """
+    Open the lens checkpoint with mmap when supported.
+
+    The Qwen3-8B lens is about 1.17 GB. Eagerly materializing it before loading
+    the 8B model can push Windows over its commit limit and terminate Python
+    without a traceback. mmap keeps the checkpoint file-backed and only faults
+    pages in as individual layer matrices are used.
+    """
+    try:
+        ckpt = torch.load(
+            path,
+            map_location="cpu",
+            weights_only=True,
+            mmap=True,
+        )
+    except TypeError:
+        # Older PyTorch fallback. This is less memory friendly but preserves
+        # compatibility; current repo requirements normally provide mmap.
+        ckpt = torch.load(path, map_location="cpu", weights_only=True)
     if "J" in ckpt:
         raw = ckpt["J"]
     elif "jacobians" in ckpt:
@@ -219,8 +238,23 @@ def main():
         "Problem: 17 * 24 = ?\nThink by checking nearby multiples first:",
     ]
 
+    # Resolve/download the lens file first, but DO NOT torch.load it yet.
+    # The first Windows run showed that keeping the ~1.17 GB lens resident while
+    # loading Qwen3-8B can make the process disappear during weight loading.
     lens_file = resolve_lens_file(args.lens_repo, args.lens_file, args.lens_prefix)
     lens_path = hf_hub_download(args.lens_repo, lens_file)
+
+    tok = AutoTokenizer.from_pretrained(args.model)
+    dtype = torch.bfloat16 if torch.cuda.is_available() else torch.float32
+    model = AutoModelForCausalLM.from_pretrained(
+        args.model,
+        dtype=dtype,
+        device_map="auto",
+        low_cpu_mem_usage=True,
+    ).eval()
+
+    # Open the lens only after the model is stably loaded. With mmap=True the
+    # matrices remain file-backed until touched.
     jacobians, lens_meta = load_jacobians(lens_path)
     available_layers = sorted(jacobians)
 
@@ -233,14 +267,6 @@ def main():
             )
     else:
         layers = available_layers
-
-    tok = AutoTokenizer.from_pretrained(args.model)
-    dtype = torch.bfloat16 if torch.cuda.is_available() else torch.float32
-    model = AutoModelForCausalLM.from_pretrained(
-        args.model,
-        dtype=dtype,
-        device_map="auto",
-    ).eval()
 
     anchor_trace = final_token_block_trace(model, tok, args.anchor)
     branch_traces = [
@@ -331,6 +357,9 @@ def main():
         # Free the largest per-layer matrix before the next iteration can move it.
         del J
         del jacobians[layer]
+        gc.collect()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
 
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
