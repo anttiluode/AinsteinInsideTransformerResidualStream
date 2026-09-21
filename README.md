@@ -105,6 +105,37 @@ Attackers include:
 
 The architecture only earns attention if the last mechanism contributes something after those controls.
 
+
+## Gate 0.5 — J-space audit
+
+The Anthropic Jacobian-lens / global-workspace result changes what counts as a meaningful branch residue.
+
+A raw residual departure can be large and geometrically novel while still living mostly in bookkeeping directions that downstream circuitry does not preferentially read or broadcast. Gate 0.5 therefore asks whether speculative branch material enters a **readable / workspace-like format** before constructive collision gets credit.
+
+See [GATE05_JSPACE.md](GATE05_JSPACE.md).
+
+Two practical changes follow immediately.
+
+First, the depth microscope now captures **raw decoder-block outputs with forward hooks**. The first real Qwen3-8B run exposed an instrumentation trap: Hugging Face's last \`output_hidden_states\` slot on Qwen/Llama-style models is post-final-normalization, so the original apparent layer-35 norm collapse was not evidence of late purification. The first receipt and correction are recorded in [RESULTS_GATE1_FIRST_RUN.md](RESULTS_GATE1_FIRST_RUN.md).
+
+Second, a new script reads the same speculative branches through a pre-fitted Qwen3-8B Jacobian lens:
+
+~~~bash
+python gate05_jspace_readout.py
+~~~
+
+By default it discovers the Qwen3-8B lens in Neuronpedia's public \`neuronpedia/jacobian-lens\` repository, downloads it, and reports branch-specific J-lens logit deltas at the fitted layers.
+
+Interpretation boundary:
+
+- top J-lens delta tokens are a **readability diagnostic**;
+- they are not yet the paper's sparse nonnegative \`k <= 25\` J-space coordinates;
+- a nonlinear collision must still beat plain J-coordinate edits, matched linear/nonlinear attackers, provenance swaps, and a broadcastability control.
+
+The stronger Gate-0 target is now:
+
+> produce a nameable, task-relevant composition that is weak or absent in either branch alone, survives held-out branch pairings, and cannot be explained by a sparse coordinate edit.
+
 ## Current code
 
 ~~~bash
