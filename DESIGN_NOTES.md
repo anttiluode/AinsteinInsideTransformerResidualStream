@@ -134,3 +134,59 @@ The useful result would be narrower and measurable:
 > for some task class, preserving and colliding internal departures provides a better accuracy/compute or adaptation/compute tradeoff than verbalizing equivalent search.
 
 That is the target.
+
+
+## Computational foveation: depth is a budget
+
+The next control variable is not only which branch survives, but how much resolution each branch is allowed to buy.
+
+For a branch set Q_t, assign an integer or continuous depth budget rho_i:
+
+sum_i rho_i <= B.
+
+A cheap first pass should estimate whether spending another unit of compute on branch i is likely to improve the task. The scheduler then allocates additional resolution selectively.
+
+This makes the architecture closer to a foveated sensor than to exhaustive search:
+
+- many routes receive only gist-level processing;
+- a few routes receive deeper computation;
+- abandoned full trajectories can disappear while compressed residues and provenance remain addressable;
+- later evidence can justify re-expanding an old gist by paying compute again.
+
+The relevant failure mode is premature collapse. A route with the best early payoff can saturate while a weak-looking branch is a late bloomer. Gate 1 therefore includes a diversity reserve rather than pure greedy allocation.
+
+### Purification is not deletion
+
+Temporal Sihti suggests a useful distinction:
+
+S -> C + {R_1, R_2, ...}
+
+C is the currently sharpened route. The residues need not remain at full resolution; they can be compressed to gist plus provenance.
+
+Purification means making C sharp while retaining enough compressed alternatives to re-open the search later.
+
+Collapse means deleting the alternatives and forcing all later computation to continue from C.
+
+The cost of retaining those alternatives must be measured. No free memory is assumed.
+
+### Relation to the J-space paper
+
+Gurnee et al., "Verbalizable Representations Form a Global Workspace in Language Models" (arXiv:2607.15495, 2026), report a small workspace-like set of representations in an intermediate band of transformer layers. Their J-space is selective, limited in capacity, and causally involved in internal reasoning; they also show planned future content that can redirect current generation.
+
+That result is useful motivation for three engineering distinctions here:
+
+1. the whole residual stream need not be treated as the current workspace;
+2. a representation of a prospective future can bend the present trajectory;
+3. limited workspace capacity makes selective resolution allocation plausible as a design target.
+
+But the paper does not demonstrate adaptive branch depth, Temporal Sihti, or the foveation scheduler proposed here. Those remain hypotheses to test directly.
+
+### Future field
+
+A speculative branch is useful even when it never becomes the chosen answer if its coarse residue says something about reachability:
+
+"structure is over there"
+"this route dead-ends"
+"these two regions may meet"
+
+A collection of such low-resolution residues forms a crude future vector field around the present state. The scheduler's job is to decide where that field deserves sharper computation.
