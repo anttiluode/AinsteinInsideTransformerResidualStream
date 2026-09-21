@@ -207,6 +207,28 @@ No strategy labels or explanatory prose appear in the candidates. The script abo
 
 See [GATE07_NUMERIC_FIRST_ACTION.md](GATE07_NUMERIC_FIRST_ACTION.md) and [RESULTS_GATE06_ANALYSIS.md](RESULTS_GATE06_ANALYSIS.md). A strong pass earns only the narrow claim that a route vector biases the next concrete arithmetic operation; free rollout remains the next attacker.
 
+### Gate 0.7b — route as a numeric trajectory
+
+Gate 0.7 did not strongly pass. A and C retained positive target margins on all three problems, but B failed on 17x24 and 19x23 and only barely won on 13x26.
+
+That failure suggests a sharper hypothesis: A and C have distinctive first transforms, while B is defined by a recurrence across several states. Gate 0.7b therefore scores **equation-only trajectories**, not one isolated arithmetic move:
+
+~~~bash
+python3.13 gate07b_numeric_trajectory.py
+~~~
+
+Example:
+
+~~~text
+A: 17 * 20 = 340; 17 * 4 = 68; 340 + 68 = 408
+B: 17 + 17 = 34; 34 + 17 = 51; 51 + 17 = 68
+C: 17 * 25 = 425; 425 - 17 = 408; 408 = 17 * 24
+~~~
+
+The script rejects any alphabetic character in the candidates. If B recovers here, that supports the idea that some route identity lives in a **transformation law across states**, not one next action.
+
+See [GATE07B_NUMERIC_TRAJECTORY.md](GATE07B_NUMERIC_TRAJECTORY.md) and [RESULTS_GATE07_ANALYSIS.md](RESULTS_GATE07_ANALYSIS.md).
+
 ## Current code
 
 ~~~bash
