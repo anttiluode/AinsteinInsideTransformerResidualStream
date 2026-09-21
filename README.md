@@ -227,6 +227,8 @@ C: 17 * 25 = 425; 425 - 17 = 408; 408 = 17 * 24
 
 The script rejects any alphabetic character in the candidates. If B recovers here, that supports the idea that some route identity lives in a **transformation law across states**, not one next action.
 
+Gate 0.7b now defaults to a deliberately conservative Windows memory profile (`6GiB` GPU + `6GiB` CPU placement budget, with overflow forced to `.offload_qwen_gate07b`). This is slower, but it avoids relying on transient RAM/VRAM headroom while Qwen shards are loaded. Override the caps only after a successful run.
+
 See [GATE07B_NUMERIC_TRAJECTORY.md](GATE07B_NUMERIC_TRAJECTORY.md) and [RESULTS_GATE07_ANALYSIS.md](RESULTS_GATE07_ANALYSIS.md).
 
 ## Current code
