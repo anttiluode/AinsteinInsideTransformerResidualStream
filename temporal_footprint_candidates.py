@@ -1,11 +1,8 @@
 from __future__ import annotations
 
-import re
-
-
 ROUTES = ("A", "B", "C")
 HORIZONS = (1, 2, 3)
-NUMERIC_ONLY = re.compile(r"^[0-9+*=;\\s-]+$")
+ALLOWED_NUMERIC_CHARS = set("0123456789+*-=; \\t\\r\\n")
 
 
 def trajectory_steps(a: int, b: int) -> dict[str, list[str]]:
@@ -47,7 +44,7 @@ def trajectory_steps(a: int, b: int) -> dict[str, list[str]]:
 
 def assert_numeric_only(candidates: dict[str, str]) -> None:
     for label, text in candidates.items():
-        if not NUMERIC_ONLY.fullmatch(text):
+        if not set(text) <= ALLOWED_NUMERIC_CHARS:
             raise RuntimeError(
                 f"non-numeric character leaked into candidate {label}: {text!r}"
             )
