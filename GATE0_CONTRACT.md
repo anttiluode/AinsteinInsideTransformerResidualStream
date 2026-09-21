@@ -48,6 +48,37 @@ R_A = C(Delta h^A_(l:l+m)).
 
 Every residue carries a provenance stamp: role, branch address, operation identity during training, and actual/simulated source when applicable.
 
+## Common carrier versus branch-specific residue
+
+The first real Qwen/J-lens receipt motivates an additional decomposition.
+
+For a set of branches forked from the same parent, define
+
+    C = mean_i R_i
+    D_i = R_i - C
+
+where `C` is the common branch carrier and `D_i` is the branch-specific departure.
+
+At layer 30 in the first receipt, raw branch pairwise cosines are substantially lower than Jacobian-transported cosines: downstream transport makes the different branches more similar even though their extreme readable token deltas remain distinct. A plausible nuisance explanation is that a strong shared task/answer-preparation direction dominates what the frozen model broadcasts.
+
+Therefore Gate 0 must compare at least:
+
+- composer on raw `R_A, R_B`;
+- composer on centered `D_A, D_B`;
+- common carrier `C` alone;
+- branch-specific `D_A` and `D_B` alone;
+- shuffled centered departures with the same carrier.
+
+A raw bilinear win that disappears after carrier controls is not evidence that branch-specific computational residues composed.
+
+The intended writeback, if centered composition works, is conceptually:
+
+    common trajectory C
+          +
+    H(D_A, D_B)
+
+rather than asking `H` to rediscover the common task carrier from every branch pair.
+
 ## Composer
 
 First nonlinear family:

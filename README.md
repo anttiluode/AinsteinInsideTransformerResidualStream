@@ -150,6 +150,27 @@ The stronger Gate-0 target is now:
 
 > produce a nameable, task-relevant composition that is weak or absent in either branch alone, survives held-out branch pairings, and cannot be explained by a sparse coordinate edit.
 
+
+### Gate 0.5d — does the readable route survive paraphrase?
+
+The first successful J-lens run gives a useful but confounded result. At layer 30 the "nearby multiples" branch promotes tokens such as \`nearby\`, \`closest\`, \`nearest\`, \`proximity\`, while the repeated-addition branch promotes \`correction\` / \`incorrect\`. Those are readable branch-conditioned consequences, but the branch prompts themselves contain the corresponding words.
+
+Before training any constructive composer, run the lexical-echo attacker:
+
+~~~bash
+python3.13 gate05_strategy_invariance.py --layers 30
+~~~
+
+This uses:
+
+- an identical suffix and final token for every prompt;
+- two paraphrases of each of the three strategies;
+- three negated-keyword decoys.
+
+It compares same-strategy versus different-strategy similarity in raw residual space, Jacobian-transported space, and full J-lens delta-logit space. The decoys ask whether the readout follows the **intended method** or merely the strategy word that appears in the prompt.
+
+See [GATE05_STRATEGY_INVARIANCE.md](GATE05_STRATEGY_INVARIANCE.md) and [RESULTS_GATE05_JSPACE_ANALYSIS.md](RESULTS_GATE05_JSPACE_ANALYSIS.md).
+
 ## Current code
 
 ~~~bash
