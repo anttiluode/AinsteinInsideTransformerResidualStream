@@ -190,3 +190,30 @@ A speculative branch is useful even when it never becomes the chosen answer if i
 "these two regions may meet"
 
 A collection of such low-resolution residues forms a crude future vector field around the present state. The scheduler's job is to decide where that field deserves sharper computation.
+
+## Educated directions and an accident budget
+
+For scientific reasoning, extra compute is only valuable if it is spent in useful regions of route space.
+
+A good proposal direction should therefore be **educated**: shaped by prior successful trajectories, known invariants, useful decompositions, and learned route/value structure.
+
+But restricting all search to the current educated basis risks scientific conservatism. Many discoveries begin as anomalies, accidental measurements, or combinations that the current model did not assign high prior value.
+
+So the scheduler should reserve a small exploration budget for proposals with a component outside the currently favored route span:
+
+    d = sum_i alpha_i D_i + eta
+
+where eta contains an outside-basis component.
+
+Novelty alone is not rewarded. An accidental direction buys deeper compute only if a cheap probe produces surprise, information gain, or task evidence:
+
+    score(d) = expected_value
+               + beta * information_gain
+               + gamma * outside_basis_novelty
+               - lambda * compute_cost
+
+This makes accidents **cheap peripheral probes**, not expensive random rumination.
+
+Most compute follows educated directions. A little compute maintains the possibility that the current basis is wrong.
+
+That exploration reserve is the scientific analogue of the diversity reserve already used by computational foveation.
