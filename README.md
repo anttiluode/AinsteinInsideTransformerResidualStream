@@ -171,6 +171,20 @@ It compares same-strategy versus different-strategy similarity in raw residual s
 
 See [GATE05_STRATEGY_INVARIANCE.md](GATE05_STRATEGY_INVARIANCE.md) and [RESULTS_GATE05_JSPACE_ANALYSIS.md](RESULTS_GATE05_JSPACE_ANALYSIS.md).
 
+### Gate 0.6 — does the route actually steer computation?
+
+Gate 0.5d passed: at layer 30, same-strategy paraphrases remain substantially closer than different strategies in raw, transported, and J-lens space, and all three negated-keyword decoys follow the intended method rather than the misleading word.
+
+The next gate therefore stops reading the route and **edits it**:
+
+~~~bash
+python3.13 gate06_causal_route_steering.py
+~~~
+
+It derives centered route directions from the 17x24 paraphrase pairs, writes one route vector once into the neutral prompt state entering block 31, and scores three valid strategy-specific continuations. The same frozen vectors are then tested on held-out multiplication problems without refitting.
+
+See [GATE06_CAUSAL_ROUTE_STEERING.md](GATE06_CAUSAL_ROUTE_STEERING.md). If this passes, simple linear route steering becomes a mandatory attacker for the later AInstein collision.
+
 ## Current code
 
 ~~~bash
