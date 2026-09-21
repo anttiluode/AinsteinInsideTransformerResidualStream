@@ -108,6 +108,25 @@ def load_jacobians(path: str) -> tuple[dict[int, torch.Tensor], dict]:
     return jacobians, meta
 
 
+def _execution_device(module) -> torch.device:
+    """Respect Accelerate dispatch hooks when a model is partially CPU-offloaded."""
+    hook = getattr(module, "_hf_hook", None)
+    execution_device = getattr(hook, "execution_device", None)
+    if execution_device is not None:
+        return torch.device(execution_device)
+
+    for param in module.parameters():
+        if param.device.type != "meta":
+            return param.device
+    return torch.device("cpu")
+
+
+def _module_dtype(module) -> torch.dtype:
+    for param in module.parameters():
+        return param.dtype
+    return torch.float32
+
+
 def final_norm_and_unembed(model, residual: torch.Tensor) -> torch.Tensor:
     if not (
         hasattr(model, "model")
@@ -118,10 +137,15 @@ def final_norm_and_unembed(model, residual: torch.Tensor) -> torch.Tensor:
 
     norm = model.model.norm
     lm_head = model.lm_head
-    norm_param = next(norm.parameters())
-    x = residual.to(device=norm_param.device, dtype=norm_param.dtype)
+    x = residual.to(
+        device=_execution_device(norm),
+        dtype=_module_dtype(norm),
+    )
     x = norm(x)
-    x = x.to(device=lm_head.weight.device, dtype=lm_head.weight.dtype)
+    x = x.to(
+        device=_execution_device(lm_head),
+        dtype=_module_dtype(lm_head),
+    )
     return lm_head(x).float().cpu()
 
 
@@ -253,8 +277,11 @@ def main():
         states = [trace[layer] for trace in branch_traces]
         raw_residues = [state - anchor for state in states]
 
+        # Convert the selected Jacobian once; the full checkpoint may contain
+        # ~1 GB of fp16 matrices, so avoid repeated fp16->fp32 copies per branch.
+        J = jacobians[layer].float().cpu()
         anchor_logits, anchor_transport = lens_logits(
-            model, anchor, jacobians[layer]
+            model, anchor, J
         )
 
         branch_logits = []
@@ -263,7 +290,7 @@ def main():
         transported_residues = []
 
         for state in states:
-            logits, transported = lens_logits(model, state, jacobians[layer])
+            logits, transported = lens_logits(model, state, J)
             branch_logits.append(logits)
             branch_transport.append(transported)
             delta_logits.append(logits - anchor_logits)
@@ -302,6 +329,7 @@ def main():
         }
 
         # Free the largest per-layer matrix before the next iteration can move it.
+        del J
         del jacobians[layer]
 
     out = Path(args.out)
