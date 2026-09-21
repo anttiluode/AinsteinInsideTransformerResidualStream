@@ -249,6 +249,20 @@ The script scores the same frozen D_A/D_B/D_C interventions at numeric horizons 
 
 The interpretation is intentionally narrow: a pass would establish a route-specific **causal temporal footprint**, not yet a dynamically rotating vector field. See [GATE07C_TEMPORAL_FOOTPRINT.md](GATE07C_TEMPORAL_FOOTPRINT.md) and [RESULTS_GATE07B_ANALYSIS.md](RESULTS_GATE07B_ANALYSIS.md).
 
+Gate 0.7c did **not** support the simple preregistered horizon story. A-short and B-late failed; C-persistent passed; the B recurrence-law attacker won on 2/3 problems. More importantly, the k=1 and k=3 values did not numerically reproduce Gates 0.7 and 0.7b closely enough to interpret tiny horizon differences safely. See [RESULTS_GATE07C_ANALYSIS.md](RESULTS_GATE07C_ANALYSIS.md).
+
+### Gate 0.7d — scoring invariance before interpretation
+
+Before adding any new cognitive mechanism, Gate 0.7d asks whether identical candidate strings and identical frozen route interventions give the same qualitative result when scored in harmlessly different batch contexts.
+
+```bash
+python3.13 gate07d_scoring_invariance.py
+```
+
+It compares the legacy three-candidate Gate-0.7 / Gate-0.7b batches against the larger Gate-0.7c batch, all inside one Qwen load with one reconstruction of D_A/D_B/D_C. The kill boundary is simple: unrelated rows may cause tiny BF16 numerical drift, but they may not flip target-margin signs or route winners. If they do, temporal-footprint interpretation is suspended until the scoring path is stabilized.
+
+See [GATE07D_SCORING_INVARIANCE.md](GATE07D_SCORING_INVARIANCE.md).
+
 ## Current code
 
 ~~~bash
