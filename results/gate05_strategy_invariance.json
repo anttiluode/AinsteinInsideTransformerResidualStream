@@ -1,0 +1,1203 @@
+{
+  "scope": "Gate-0.5 lexical-echo attacker. Same-strategy paraphrases and negated-keyword decoys share an identical suffix/final token.",
+  "model": "Qwen/Qwen3-8B",
+  "lens_repo": "neuronpedia/jacobian-lens",
+  "lens_file": "qwen3-8b/jlens/Salesforce-wikitext/Qwen3-8B_jacobian_lens.pt",
+  "lens_meta": {
+    "n_prompts": 461,
+    "d_model": 4096,
+    "source_layers": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34
+    ]
+  },
+  "prompt_control": {
+    "common_suffix_text": "\nDo not state the answer yet. Continue from this method.\nWork:",
+    "common_suffix_token_count_across_all_prompts": 15,
+    "shared_final_token_id": 25,
+    "shared_final_token": ":",
+    "token_counts": {
+      "anchor": 32,
+      "A1": 53,
+      "A2": 48,
+      "B1": 50,
+      "B2": 49,
+      "C1": 52,
+      "C2": 46,
+      "A_with_nearby_decoy": 57,
+      "B_with_decomposition_decoy": 52,
+      "C_with_correction_decoy": 50
+    }
+  },
+  "prompts": {
+    "anchor": {
+      "label": "anchor",
+      "kind": "anchor",
+      "text": "Problem: 17 * 24 = ?\nInstruction: solve the problem carefully.\nDo not state the answer yet. Continue from this method.\nWork:"
+    },
+    "A1": {
+      "label": "A",
+      "kind": "paraphrase",
+      "text": "Problem: 17 * 24 = ?\nInstruction: split 24 into 20 and 4, multiply 17 by each part, then combine the partial products.\nDo not state the answer yet. Continue from this method.\nWork:"
+    },
+    "A2": {
+      "label": "A",
+      "kind": "paraphrase",
+      "text": "Problem: 17 * 24 = ?\nInstruction: break one factor into an easy round chunk plus its remainder, compute both partial products, then add them.\nDo not state the answer yet. Continue from this method.\nWork:"
+    },
+    "B1": {
+      "label": "B",
+      "kind": "paraphrase",
+      "text": "Problem: 17 * 24 = ?\nInstruction: build the product as a running sum by adding 17 twenty-four times, checking the accumulation as you go.\nDo not state the answer yet. Continue from this method.\nWork:"
+    },
+    "B2": {
+      "label": "B",
+      "kind": "paraphrase",
+      "text": "Problem: 17 * 24 = ?\nInstruction: accumulate twenty-four copies of 17 one after another, repairing any slip in the running total before finishing.\nDo not state the answer yet. Continue from this method.\nWork:"
+    },
+    "C1": {
+      "label": "C",
+      "kind": "paraphrase",
+      "text": "Problem: 17 * 24 = ?\nInstruction: start from a convenient product close to 17 times 24, then compensate for the difference to reach the target.\nDo not state the answer yet. Continue from this method.\nWork:"
+    },
+    "C2": {
+      "label": "C",
+      "kind": "paraphrase",
+      "text": "Problem: 17 * 24 = ?\nInstruction: choose an easy multiplication around the target value and adjust for the offset instead of calculating it directly.\nDo not state the answer yet. Continue from this method.\nWork:"
+    },
+    "A_with_nearby_decoy": {
+      "label": "A",
+      "kind": "lexical_decoy",
+      "text": "Problem: 17 * 24 = ?\nInstruction: ignore nearby multiples; split 24 into 20 and 4, multiply 17 by each part, then combine the partial products.\nDo not state the answer yet. Continue from this method.\nWork:",
+      "lexical_decoy_label": "C"
+    },
+    "B_with_decomposition_decoy": {
+      "label": "B",
+      "kind": "lexical_decoy",
+      "text": "Problem: 17 * 24 = ?\nInstruction: do not use decomposition; build the product as a running sum by adding 17 twenty-four times and check the accumulation.\nDo not state the answer yet. Continue from this method.\nWork:",
+      "lexical_decoy_label": "A"
+    },
+    "C_with_correction_decoy": {
+      "label": "C",
+      "kind": "lexical_decoy",
+      "text": "Problem: 17 * 24 = ?\nInstruction: do not use repeated addition or correction; start from a convenient product close to the target and compensate for the difference.\nDo not state the answer yet. Continue from this method.\nWork:",
+      "lexical_decoy_label": "B"
+    }
+  },
+  "layers": {
+    "30": {
+      "raw_residue_invariance": {
+        "within_strategy_mean": 0.8105659087498983,
+        "between_strategy_mean": 0.5088100507855415,
+        "invariance_gap": 0.3017558579643568,
+        "pairs": [
+          {
+            "a": "A1",
+            "b": "A2",
+            "same_strategy": true,
+            "cosine": 0.7062461376190186
+          },
+          {
+            "a": "A1",
+            "b": "B1",
+            "same_strategy": false,
+            "cosine": 0.4979475140571594
+          },
+          {
+            "a": "A1",
+            "b": "B2",
+            "same_strategy": false,
+            "cosine": 0.44411802291870117
+          },
+          {
+            "a": "A1",
+            "b": "C1",
+            "same_strategy": false,
+            "cosine": 0.4907783567905426
+          },
+          {
+            "a": "A1",
+            "b": "C2",
+            "same_strategy": false,
+            "cosine": 0.3898867666721344
+          },
+          {
+            "a": "A2",
+            "b": "B1",
+            "same_strategy": false,
+            "cosine": 0.47000181674957275
+          },
+          {
+            "a": "A2",
+            "b": "B2",
+            "same_strategy": false,
+            "cosine": 0.42504119873046875
+          },
+          {
+            "a": "A2",
+            "b": "C1",
+            "same_strategy": false,
+            "cosine": 0.6636008620262146
+          },
+          {
+            "a": "A2",
+            "b": "C2",
+            "same_strategy": false,
+            "cosine": 0.6446870565414429
+          },
+          {
+            "a": "B1",
+            "b": "B2",
+            "same_strategy": true,
+            "cosine": 0.8605184555053711
+          },
+          {
+            "a": "B1",
+            "b": "C1",
+            "same_strategy": false,
+            "cosine": 0.5772702693939209
+          },
+          {
+            "a": "B1",
+            "b": "C2",
+            "same_strategy": false,
+            "cosine": 0.45550769567489624
+          },
+          {
+            "a": "B2",
+            "b": "C1",
+            "same_strategy": false,
+            "cosine": 0.5783030390739441
+          },
+          {
+            "a": "B2",
+            "b": "C2",
+            "same_strategy": false,
+            "cosine": 0.4685780107975006
+          },
+          {
+            "a": "C1",
+            "b": "C2",
+            "same_strategy": true,
+            "cosine": 0.8649331331253052
+          }
+        ]
+      },
+      "transported_residue_invariance": {
+        "within_strategy_mean": 0.8176873723665873,
+        "between_strategy_mean": 0.512919194996357,
+        "invariance_gap": 0.3047681773702303,
+        "pairs": [
+          {
+            "a": "A1",
+            "b": "A2",
+            "same_strategy": true,
+            "cosine": 0.6453685760498047
+          },
+          {
+            "a": "A1",
+            "b": "B1",
+            "same_strategy": false,
+            "cosine": 0.348651647567749
+          },
+          {
+            "a": "A1",
+            "b": "B2",
+            "same_strategy": false,
+            "cosine": 0.2279617190361023
+          },
+          {
+            "a": "A1",
+            "b": "C1",
+            "same_strategy": false,
+            "cosine": 0.29782119393348694
+          },
+          {
+            "a": "A1",
+            "b": "C2",
+            "same_strategy": false,
+            "cosine": 0.2619926631450653
+          },
+          {
+            "a": "A2",
+            "b": "B1",
+            "same_strategy": false,
+            "cosine": 0.5367683172225952
+          },
+          {
+            "a": "A2",
+            "b": "B2",
+            "same_strategy": false,
+            "cosine": 0.47395041584968567
+          },
+          {
+            "a": "A2",
+            "b": "C1",
+            "same_strategy": false,
+            "cosine": 0.667320728302002
+          },
+          {
+            "a": "A2",
+            "b": "C2",
+            "same_strategy": false,
+            "cosine": 0.6686282157897949
+          },
+          {
+            "a": "B1",
+            "b": "B2",
+            "same_strategy": true,
+            "cosine": 0.9026890993118286
+          },
+          {
+            "a": "B1",
+            "b": "C1",
+            "same_strategy": false,
+            "cosine": 0.7090663909912109
+          },
+          {
+            "a": "B1",
+            "b": "C2",
+            "same_strategy": false,
+            "cosine": 0.5969645380973816
+          },
+          {
+            "a": "B2",
+            "b": "C1",
+            "same_strategy": false,
+            "cosine": 0.7385782599449158
+          },
+          {
+            "a": "B2",
+            "b": "C2",
+            "same_strategy": false,
+            "cosine": 0.627326250076294
+          },
+          {
+            "a": "C1",
+            "b": "C2",
+            "same_strategy": true,
+            "cosine": 0.9050044417381287
+          }
+        ]
+      },
+      "lens_logit_invariance": {
+        "within_strategy_mean": 0.8698839942614237,
+        "between_strategy_mean": 0.675750141342481,
+        "invariance_gap": 0.1941338529189427,
+        "pairs": [
+          {
+            "a": "A1",
+            "b": "A2",
+            "same_strategy": true,
+            "cosine": 0.7322686910629272
+          },
+          {
+            "a": "A1",
+            "b": "B1",
+            "same_strategy": false,
+            "cosine": 0.5862269401550293
+          },
+          {
+            "a": "A1",
+            "b": "B2",
+            "same_strategy": false,
+            "cosine": 0.4887774884700775
+          },
+          {
+            "a": "A1",
+            "b": "C1",
+            "same_strategy": false,
+            "cosine": 0.526962399482727
+          },
+          {
+            "a": "A1",
+            "b": "C2",
+            "same_strategy": false,
+            "cosine": 0.4668186604976654
+          },
+          {
+            "a": "A2",
+            "b": "B1",
+            "same_strategy": false,
+            "cosine": 0.725335419178009
+          },
+          {
+            "a": "A2",
+            "b": "B2",
+            "same_strategy": false,
+            "cosine": 0.6576377749443054
+          },
+          {
+            "a": "A2",
+            "b": "C1",
+            "same_strategy": false,
+            "cosine": 0.8166306018829346
+          },
+          {
+            "a": "A2",
+            "b": "C2",
+            "same_strategy": false,
+            "cosine": 0.8044172525405884
+          },
+          {
+            "a": "B1",
+            "b": "B2",
+            "same_strategy": true,
+            "cosine": 0.9239815473556519
+          },
+          {
+            "a": "B1",
+            "b": "C1",
+            "same_strategy": false,
+            "cosine": 0.791063666343689
+          },
+          {
+            "a": "B1",
+            "b": "C2",
+            "same_strategy": false,
+            "cosine": 0.7324774265289307
+          },
+          {
+            "a": "B2",
+            "b": "C1",
+            "same_strategy": false,
+            "cosine": 0.7832581400871277
+          },
+          {
+            "a": "B2",
+            "b": "C2",
+            "same_strategy": false,
+            "cosine": 0.7293959259986877
+          },
+          {
+            "a": "C1",
+            "b": "C2",
+            "same_strategy": true,
+            "cosine": 0.9534017443656921
+          }
+        ]
+      },
+      "decoy_test": {
+        "rows": [
+          {
+            "name": "A_with_nearby_decoy",
+            "intended": "A",
+            "lexical_decoy": "C",
+            "centroid_cosines": {
+              "A": 0.9045843482017517,
+              "B": 0.7438271045684814,
+              "C": 0.6927894949913025
+            },
+            "nearest_strategy_centroid": "A"
+          },
+          {
+            "name": "B_with_decomposition_decoy",
+            "intended": "B",
+            "lexical_decoy": "A",
+            "centroid_cosines": {
+              "A": 0.7267866730690002,
+              "B": 0.9504048228263855,
+              "C": 0.7945280075073242
+            },
+            "nearest_strategy_centroid": "B"
+          },
+          {
+            "name": "C_with_correction_decoy",
+            "intended": "C",
+            "lexical_decoy": "B",
+            "centroid_cosines": {
+              "A": 0.7505562901496887,
+              "B": 0.8032073974609375,
+              "C": 0.9408952593803406
+            },
+            "nearest_strategy_centroid": "C"
+          }
+        ],
+        "intended_strategy_accuracy": 1.0,
+        "lexical_decoy_capture_rate": 0.0
+      },
+      "prompts": {
+        "A1": {
+          "label": "A",
+          "kind": "paraphrase",
+          "raw_residue_norm": 167.15797424316406,
+          "transported_residue_norm": 212.0637664794922,
+          "top_wordlike_positive_delta_tokens": [
+            {
+              "token_id": 105652,
+              "token": "\u6b65\u9aa4",
+              "score": 7.875
+            },
+            {
+              "token_id": 99331,
+              "token": "\u7167",
+              "score": 7.125
+            },
+            {
+              "token_id": 99659,
+              "token": "\u90e8\u5206",
+              "score": 7.0625
+            },
+            {
+              "token_id": 11946,
+              "token": "_step",
+              "score": 7.0
+            },
+            {
+              "token_id": 116586,
+              "token": "\u90e8\u5206\u5185\u5bb9",
+              "score": 6.625
+            },
+            {
+              "token_id": 21465,
+              "token": ".step",
+              "score": 6.625
+            },
+            {
+              "token_id": 48981,
+              "token": "/part",
+              "score": 6.53125
+            },
+            {
+              "token_id": 77093,
+              "token": "\tstep",
+              "score": 6.5
+            },
+            {
+              "token_id": 28037,
+              "token": "-part",
+              "score": 6.453125
+            },
+            {
+              "token_id": 38436,
+              "token": "(step",
+              "score": 6.375
+            },
+            {
+              "token_id": 10080,
+              "token": "erge",
+              "score": 6.37109375
+            },
+            {
+              "token_id": 104709,
+              "token": "\u5df2\u6709",
+              "score": 6.34375
+            },
+            {
+              "token_id": 95054,
+              "token": " Gaut",
+              "score": 6.0625
+            },
+            {
+              "token_id": 103938,
+              "token": "\u6559\u5e08",
+              "score": 6.03125
+            },
+            {
+              "token_id": 4480,
+              "token": "part",
+              "score": 6.03125
+            }
+          ]
+        },
+        "A2": {
+          "label": "A",
+          "kind": "paraphrase",
+          "raw_residue_norm": 160.1608123779297,
+          "transported_residue_norm": 210.43162536621094,
+          "top_wordlike_positive_delta_tokens": [
+            {
+              "token_id": 101348,
+              "token": "\u62c6",
+              "score": 6.625
+            },
+            {
+              "token_id": 27810,
+              "token": " Split",
+              "score": 6.25
+            },
+            {
+              "token_id": 86184,
+              "token": " Burr",
+              "score": 6.248046875
+            },
+            {
+              "token_id": 17052,
+              "token": "_split",
+              "score": 6.125
+            },
+            {
+              "token_id": 87900,
+              "token": " Rao",
+              "score": 6.1171875
+            },
+            {
+              "token_id": 98461,
+              "token": "?a",
+              "score": 6.09765625
+            },
+            {
+              "token_id": 59980,
+              "token": " bowls",
+              "score": 6.0234375
+            },
+            {
+              "token_id": 111245,
+              "token": "\u600e\u4e48\u8bf4",
+              "score": 5.9609375
+            },
+            {
+              "token_id": 2086,
+              "token": " second",
+              "score": 5.957763671875
+            },
+            {
+              "token_id": 56077,
+              "token": ".break",
+              "score": 5.953125
+            },
+            {
+              "token_id": 84498,
+              "token": " breakup",
+              "score": 5.90625
+            },
+            {
+              "token_id": 77103,
+              "token": "_Task",
+              "score": 5.90625
+            },
+            {
+              "token_id": 107878,
+              "token": "\u5206\u5f00",
+              "score": 5.84375
+            },
+            {
+              "token_id": 80069,
+              "token": " devs",
+              "score": 5.84375
+            },
+            {
+              "token_id": 82742,
+              "token": " loosen",
+              "score": 5.8125
+            }
+          ]
+        },
+        "B1": {
+          "label": "B",
+          "kind": "paraphrase",
+          "raw_residue_norm": 209.36610412597656,
+          "transported_residue_norm": 327.21807861328125,
+          "top_wordlike_positive_delta_tokens": [
+            {
+              "token_id": 1242,
+              "token": "sum",
+              "score": 10.9296875
+            },
+            {
+              "token_id": 2629,
+              "token": " sum",
+              "score": 10.90625
+            },
+            {
+              "token_id": 3694,
+              "token": " added",
+              "score": 10.7109375
+            },
+            {
+              "token_id": 9190,
+              "token": "Sum",
+              "score": 10.5703125
+            },
+            {
+              "token_id": 10160,
+              "token": "_sum",
+              "score": 10.4375
+            },
+            {
+              "token_id": 34259,
+              "token": " summ",
+              "score": 10.3984375
+            },
+            {
+              "token_id": 65666,
+              "token": " summed",
+              "score": 10.234375
+            },
+            {
+              "token_id": 59253,
+              "token": "cum",
+              "score": 10.091796875
+            },
+            {
+              "token_id": 13183,
+              "token": ".sum",
+              "score": 9.765625
+            },
+            {
+              "token_id": 8116,
+              "token": " Sum",
+              "score": 9.75
+            },
+            {
+              "token_id": 53745,
+              "token": ">Add",
+              "score": 9.71875
+            },
+            {
+              "token_id": 69544,
+              "token": "summ",
+              "score": 9.6875
+            },
+            {
+              "token_id": 36398,
+              "token": " sums",
+              "score": 9.53125
+            },
+            {
+              "token_id": 85805,
+              "token": "Cum",
+              "score": 9.48828125
+            },
+            {
+              "token_id": 41676,
+              "token": ".Sum",
+              "score": 9.484375
+            }
+          ]
+        },
+        "B2": {
+          "label": "B",
+          "kind": "paraphrase",
+          "raw_residue_norm": 199.59295654296875,
+          "transported_residue_norm": 346.5428466796875,
+          "top_wordlike_positive_delta_tokens": [
+            {
+              "token_id": 4303,
+              "token": " running",
+              "score": 9.3203125
+            },
+            {
+              "token_id": 3694,
+              "token": " added",
+              "score": 8.8359375
+            },
+            {
+              "token_id": 59253,
+              "token": "cum",
+              "score": 8.716796875
+            },
+            {
+              "token_id": 31578,
+              "token": " Cum",
+              "score": 8.53125
+            },
+            {
+              "token_id": 28025,
+              "token": " Running",
+              "score": 8.46875
+            },
+            {
+              "token_id": 12177,
+              "token": " cum",
+              "score": 8.40625
+            },
+            {
+              "token_id": 15421,
+              "token": " accum",
+              "score": 8.40625
+            },
+            {
+              "token_id": 85805,
+              "token": "Cum",
+              "score": 8.30078125
+            },
+            {
+              "token_id": 137929,
+              "token": " \u043e\u0436\u0438\u0434\u0430",
+              "score": 8.203125
+            },
+            {
+              "token_id": 75837,
+              "token": "_accum",
+              "score": 8.15625
+            },
+            {
+              "token_id": 107381,
+              "token": "\u8d77\u6b65",
+              "score": 8.09375
+            },
+            {
+              "token_id": 91585,
+              "token": " accumulating",
+              "score": 8.03125
+            },
+            {
+              "token_id": 39844,
+              "token": " cumulative",
+              "score": 8.0
+            },
+            {
+              "token_id": 65666,
+              "token": " summed",
+              "score": 7.984375
+            },
+            {
+              "token_id": 40065,
+              "token": " accumulated",
+              "score": 7.9375
+            }
+          ]
+        },
+        "C1": {
+          "label": "C",
+          "kind": "paraphrase",
+          "raw_residue_norm": 175.14186096191406,
+          "transported_residue_norm": 287.3376770019531,
+          "top_wordlike_positive_delta_tokens": [
+            {
+              "token_id": 3143,
+              "token": " near",
+              "score": 8.62890625
+            },
+            {
+              "token_id": 44868,
+              "token": " approximate",
+              "score": 8.140625
+            },
+            {
+              "token_id": 59258,
+              "token": "\u8fd1",
+              "score": 7.953125
+            },
+            {
+              "token_id": 128914,
+              "token": " g\u1ea7n",
+              "score": 7.92578125
+            },
+            {
+              "token_id": 14046,
+              "token": " nearby",
+              "score": 7.828125
+            },
+            {
+              "token_id": 51659,
+              "token": "near",
+              "score": 7.6915283203125
+            },
+            {
+              "token_id": 99136,
+              "token": " Pang",
+              "score": 7.5703125
+            },
+            {
+              "token_id": 30394,
+              "token": " Near",
+              "score": 7.5
+            },
+            {
+              "token_id": 107922,
+              "token": "\u9644\u8fd1\u7684",
+              "score": 7.453125
+            },
+            {
+              "token_id": 115861,
+              "token": "\u76f8\u8fd1",
+              "score": 7.40625
+            },
+            {
+              "token_id": 43819,
+              "token": " Approx",
+              "score": 7.40625
+            },
+            {
+              "token_id": 4325,
+              "token": " someone",
+              "score": 7.375
+            },
+            {
+              "token_id": 132769,
+              "token": "\u8fd1\u304f",
+              "score": 7.21875
+            },
+            {
+              "token_id": 45170,
+              "token": " Lud",
+              "score": 7.140625
+            },
+            {
+              "token_id": 129168,
+              "token": " kho\u1ea3ng",
+              "score": 7.1171875
+            }
+          ]
+        },
+        "C2": {
+          "label": "C",
+          "kind": "paraphrase",
+          "raw_residue_norm": 160.00341796875,
+          "transported_residue_norm": 240.97482299804688,
+          "top_wordlike_positive_delta_tokens": [
+            {
+              "token_id": 5754,
+              "token": " choice",
+              "score": 8.2734375
+            },
+            {
+              "token_id": 44868,
+              "token": " approximate",
+              "score": 8.265625
+            },
+            {
+              "token_id": 18774,
+              "token": " choosing",
+              "score": 8.09375
+            },
+            {
+              "token_id": 5157,
+              "token": " choose",
+              "score": 8.0625
+            },
+            {
+              "token_id": 130699,
+              "token": " \u0432\u044b\u0431\u043e\u0440",
+              "score": 7.533203125
+            },
+            {
+              "token_id": 8674,
+              "token": " relative",
+              "score": 7.5
+            },
+            {
+              "token_id": 108325,
+              "token": "\u53ef\u4ee5\u9009\u62e9",
+              "score": 7.5
+            },
+            {
+              "token_id": 137945,
+              "token": " \u0432\u044b\u0431\u0440\u0430\u0442\u044c",
+              "score": 7.3125
+            },
+            {
+              "token_id": 115673,
+              "token": "\u504f\u5411",
+              "score": 7.25
+            },
+            {
+              "token_id": 4190,
+              "token": " suggest",
+              "score": 7.234375
+            },
+            {
+              "token_id": 77433,
+              "token": "_choose",
+              "score": 7.203125
+            },
+            {
+              "token_id": 62626,
+              "token": "-choice",
+              "score": 7.171875
+            },
+            {
+              "token_id": 92904,
+              "token": "+offset",
+              "score": 7.125
+            },
+            {
+              "token_id": 2600,
+              "token": " cho",
+              "score": 7.109375
+            },
+            {
+              "token_id": 14046,
+              "token": " nearby",
+              "score": 7.078125
+            }
+          ]
+        },
+        "A_with_nearby_decoy": {
+          "label": "A",
+          "kind": "lexical_decoy",
+          "raw_residue_norm": 172.44056701660156,
+          "transported_residue_norm": 235.09361267089844,
+          "top_wordlike_positive_delta_tokens": [
+            {
+              "token_id": 25173,
+              "token": "ieu",
+              "score": 6.328125
+            },
+            {
+              "token_id": 88898,
+              "token": " Masc",
+              "score": 6.0859375
+            },
+            {
+              "token_id": 69101,
+              "token": "-hit",
+              "score": 6.0625
+            },
+            {
+              "token_id": 113302,
+              "token": "\u516d\u5408",
+              "score": 6.0390625
+            },
+            {
+              "token_id": 10080,
+              "token": "erge",
+              "score": 5.99609375
+            },
+            {
+              "token_id": 26105,
+              "token": "erie",
+              "score": 5.77734375
+            },
+            {
+              "token_id": 24779,
+              "token": "licity",
+              "score": 5.7734375
+            },
+            {
+              "token_id": 22270,
+              "token": "/local",
+              "score": 5.65625
+            },
+            {
+              "token_id": 89866,
+              "token": "gr\u00e9",
+              "score": 5.640625
+            },
+            {
+              "token_id": 50499,
+              "token": "igkeit",
+              "score": 5.625
+            },
+            {
+              "token_id": 45170,
+              "token": " Lud",
+              "score": 5.5625
+            },
+            {
+              "token_id": 7473,
+              "token": " mil",
+              "score": 5.55078125
+            },
+            {
+              "token_id": 87900,
+              "token": " Rao",
+              "score": 5.5
+            },
+            {
+              "token_id": 95054,
+              "token": " Gaut",
+              "score": 5.46875
+            },
+            {
+              "token_id": 118264,
+              "token": "\u53e6\u4e00\u534a",
+              "score": 5.390625
+            }
+          ]
+        },
+        "B_with_decomposition_decoy": {
+          "label": "B",
+          "kind": "lexical_decoy",
+          "raw_residue_norm": 202.3263702392578,
+          "transported_residue_norm": 330.1298522949219,
+          "top_wordlike_positive_delta_tokens": [
+            {
+              "token_id": 53745,
+              "token": ">Add",
+              "score": 10.40625
+            },
+            {
+              "token_id": 3694,
+              "token": " added",
+              "score": 10.2734375
+            },
+            {
+              "token_id": 2629,
+              "token": " sum",
+              "score": 9.71875
+            },
+            {
+              "token_id": 1242,
+              "token": "sum",
+              "score": 9.6171875
+            },
+            {
+              "token_id": 10160,
+              "token": "_sum",
+              "score": 9.4375
+            },
+            {
+              "token_id": 34259,
+              "token": " summ",
+              "score": 9.3984375
+            },
+            {
+              "token_id": 9190,
+              "token": "Sum",
+              "score": 9.3828125
+            },
+            {
+              "token_id": 15814,
+              "token": " ADD",
+              "score": 9.34375
+            },
+            {
+              "token_id": 15665,
+              "token": "ADD",
+              "score": 9.3359375
+            },
+            {
+              "token_id": 59253,
+              "token": "cum",
+              "score": 9.279296875
+            },
+            {
+              "token_id": 42855,
+              "token": "\u6dfb\u52a0",
+              "score": 9.25
+            },
+            {
+              "token_id": 65666,
+              "token": " summed",
+              "score": 9.109375
+            },
+            {
+              "token_id": 38488,
+              "token": ":add",
+              "score": 8.984375
+            },
+            {
+              "token_id": 2212,
+              "token": "Add",
+              "score": 8.953125
+            },
+            {
+              "token_id": 13183,
+              "token": ".sum",
+              "score": 8.953125
+            }
+          ]
+        },
+        "C_with_correction_decoy": {
+          "label": "C",
+          "kind": "lexical_decoy",
+          "raw_residue_norm": 157.04730224609375,
+          "transported_residue_norm": 222.3712158203125,
+          "top_wordlike_positive_delta_tokens": [
+            {
+              "token_id": 35258,
+              "token": " Bench",
+              "score": 6.625
+            },
+            {
+              "token_id": 86947,
+              "token": " diffs",
+              "score": 6.5
+            },
+            {
+              "token_id": 102478,
+              "token": "\u5dee\u5f02",
+              "score": 6.4375
+            },
+            {
+              "token_id": 104394,
+              "token": "\u9884\u671f",
+              "score": 6.3359375
+            },
+            {
+              "token_id": 99372,
+              "token": "\u79bb",
+              "score": 6.0859375
+            },
+            {
+              "token_id": 74211,
+              "token": " Negot",
+              "score": 6.05419921875
+            },
+            {
+              "token_id": 120763,
+              "token": "\u9608",
+              "score": 6.015625
+            },
+            {
+              "token_id": 64706,
+              "token": " Riot",
+              "score": 5.984375
+            },
+            {
+              "token_id": 73936,
+              "token": "_nan",
+              "score": 5.9609375
+            },
+            {
+              "token_id": 90863,
+              "token": " Mango",
+              "score": 5.90625
+            },
+            {
+              "token_id": 95103,
+              "token": "\u201cAt",
+              "score": 5.87890625
+            },
+            {
+              "token_id": 139742,
+              "token": " diferen\u00e7a",
+              "score": 5.875
+            },
+            {
+              "token_id": 10168,
+              "token": "\u201cI",
+              "score": 5.8515625
+            },
+            {
+              "token_id": 126295,
+              "token": "g\u00e9",
+              "score": 5.8515625
+            },
+            {
+              "token_id": 70475,
+              "token": "_rat",
+              "score": 5.84375
+            }
+          ]
+        }
+      }
+    }
+  }
+}
