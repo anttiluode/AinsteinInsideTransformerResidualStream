@@ -5,7 +5,7 @@ import re
 
 ROUTES = ("A", "B", "C")
 HORIZONS = (1, 2, 3)
-NUMERIC_ONLY = re.compile(r"^[0-9+*\\-=;\\s]+$")
+NUMERIC_ONLY = re.compile(r"^[0-9+*=;\\s-]+$")
 
 
 def trajectory_steps(a: int, b: int) -> dict[str, list[str]]:
