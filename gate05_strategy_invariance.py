@@ -7,12 +7,12 @@ from pathlib import Path
 from statistics import mean
 
 import torch
+from huggingface_hub import hf_hub_download
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from gate05_jspace_readout import (
     DEFAULT_LENS_PREFIX,
     DEFAULT_LENS_REPO,
-    hf_hub_download,
     lens_logits,
     load_jacobians,
     resolve_lens_file,
