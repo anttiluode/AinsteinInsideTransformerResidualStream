@@ -36,9 +36,9 @@ def parse_args():
     p.add_argument('--source-layer', type=int, default=30)
     p.add_argument('--scale', type=float, default=1.0)
     p.add_argument('--heldout', default='13x26,19x23')
-    p.add_argument('--gpu-memory', default='8GiB')
-    p.add_argument('--cpu-memory', default='10GiB')
-    p.add_argument('--offload-dir', default='.offload_qwen')
+    p.add_argument('--gpu-memory', default='6GiB')
+    p.add_argument('--cpu-memory', default='6GiB')
+    p.add_argument('--offload-dir', default='.offload_qwen_gate07b')
     p.add_argument('--seed', type=int, default=0)
     p.add_argument('--out', default='results/gate07b_numeric_trajectory.json')
     return p.parse_args()
@@ -81,6 +81,15 @@ def main():
     args = parse_args()
     heldout = [parse_problem(x.strip()) for x in args.heldout.split(',') if x.strip()]
 
+    print(
+        'Gate 0.7b safe-memory profile: '
+        f'cuda:0={args.gpu_memory}, cpu={args.cpu_memory}, '
+        f'disk overflow={args.offload_dir}'
+    )
+    print(
+        'The deliberately low combined placement budget forces part of Qwen '
+        'to disk instead of relying on transient Windows RAM/VRAM headroom.'
+    )
     model, tok = load_model(args)
     print('Qwen load complete. Reconstructing centered route vectors.')
 
