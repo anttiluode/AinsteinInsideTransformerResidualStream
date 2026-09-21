@@ -185,6 +185,28 @@ It derives centered route directions from the 17x24 paraphrase pairs, writes one
 
 See [GATE06_CAUSAL_ROUTE_STEERING.md](GATE06_CAUSAL_ROUTE_STEERING.md). If this passes, simple linear route steering becomes a mandatory attacker for the later AInstein collision.
 
+### Gate 0.7 — numeric first action, no method-language
+
+Gate 0.6 passed strongly: the centered route vectors derived only from 17x24 produced matching-route preference on all three rows for the source problem and both held-out multiplication problems. Mean held-out diagonal advantage was +0.08422, essentially unchanged from the source +0.08778.
+
+The remaining attacker is that Gate 0.6 scored **verbal descriptions** of the methods. Gate 0.7 removes those words entirely:
+
+~~~bash
+python3.13 gate07_numeric_first_action.py
+~~~
+
+The same frozen D_A/D_B/D_C vectors now compete over bare arithmetic moves such as:
+
+~~~text
+A: 13 * 20 = 260
+B: 13 + 13 = 26
+C: 13 * 27 = 351
+~~~
+
+No strategy labels or explanatory prose appear in the candidates. The script aborts if method words leak in.
+
+See [GATE07_NUMERIC_FIRST_ACTION.md](GATE07_NUMERIC_FIRST_ACTION.md) and [RESULTS_GATE06_ANALYSIS.md](RESULTS_GATE06_ANALYSIS.md). A strong pass earns only the narrow claim that a route vector biases the next concrete arithmetic operation; free rollout remains the next attacker.
+
 ## Current code
 
 ~~~bash
