@@ -231,6 +231,24 @@ Gate 0.7b now defaults to a deliberately conservative Windows memory profile (`6
 
 See [GATE07B_NUMERIC_TRAJECTORY.md](GATE07B_NUMERIC_TRAJECTORY.md) and [RESULTS_GATE07_ANALYSIS.md](RESULTS_GATE07_ANALYSIS.md).
 
+### Gate 0.7c — causal temporal footprint
+
+Gate 0.7b produced a route-dependent horizon pattern rather than one uniform steering result: A weakened when extended beyond its first move, B improved when recurrence depth was included, and C stayed positive. The next gate therefore treats **support horizon** as part of the causal object:
+
+```text
+route direction + how long its influence remains useful
+```
+
+Run:
+
+```bash
+python3.13 gate07c_temporal_footprint.py
+```
+
+The script scores the same frozen D_A/D_B/D_C interventions at numeric horizons k=1,2,3 and reports both cumulative and newly-added-transition margins. It also attacks B with equation-only recurrence decoys that preserve the plus operator, recurrence depth, or even the exact first edge.
+
+The interpretation is intentionally narrow: a pass would establish a route-specific **causal temporal footprint**, not yet a dynamically rotating vector field. See [GATE07C_TEMPORAL_FOOTPRINT.md](GATE07C_TEMPORAL_FOOTPRINT.md) and [RESULTS_GATE07B_ANALYSIS.md](RESULTS_GATE07B_ANALYSIS.md).
+
 ## Current code
 
 ~~~bash
